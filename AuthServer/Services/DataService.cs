@@ -21,5 +21,11 @@ namespace AuthServer.Services
             var users = await _dataContext.Users.ToListAsync();
             return users;
         }
+
+        public bool AddUser()
+        {
+            _dataContext.Users.Add(new User());
+            return true;
+        }
     }
 }
