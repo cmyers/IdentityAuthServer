@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace AuthServer.Services
 {
-    public class DataService : IDataService
+    public class UserService : IUserService
     {
         private readonly DataDbContext _dataContext;
 
-        public DataService(DataDbContext dataContext)
+        public UserService(DataDbContext dataContext)
         {
             _dataContext = dataContext;
         }
@@ -19,6 +19,16 @@ namespace AuthServer.Services
         {
             var users = await _dataContext.Users.ToListAsync();
             return users;
+        }
+
+        public async Task<bool> Authenticate(Login login)
+        {
+            var user = await _dataContext.Users.Where(u => u.Username == login.UserName && u.Password == login.Password).FirstOrDefaultAsync();
+            if (user != null)
+            {
+                return true;
+            }
+            return false;
         }
 
         public bool AddUser()

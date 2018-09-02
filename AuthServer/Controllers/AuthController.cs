@@ -18,10 +18,10 @@ namespace AuthServer.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IDataService _dataService;
+        private IUserService _dataService;
         private IConfiguration _configuration;
 
-        public AuthController(IDataService dataService, IConfiguration configuration)
+        public AuthController(IUserService dataService, IConfiguration configuration)
         {
             _dataService = dataService;
             _configuration = configuration;
@@ -30,7 +30,8 @@ namespace AuthServer.Controllers
         // GET api/values
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> Get()
+        [Route("getusers")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return Ok(await _dataService.GetUsers());
         }
@@ -44,10 +45,9 @@ namespace AuthServer.Controllers
                 return BadRequest("Invalid client request");
             }
 
-            var users = await _dataService.GetUsers(); //TODO: add get single user method
-            User user = users.Where(u => u.Username == login.UserName  && u.Password == login.Password).FirstOrDefault();
+            bool authenticated = await _dataService.Authenticate(login);
 
-            if (user != null)
+            if (authenticated)
             {
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
                 var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);

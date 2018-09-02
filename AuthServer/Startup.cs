@@ -25,7 +25,6 @@ namespace AuthServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(Configuration);
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
@@ -44,8 +43,7 @@ namespace AuthServer
             });
             services.AddDbContext<DataDbContext>(options => options.UseSqlServer(Configuration.GetSection("ConnectionStrings:DataConnection").Value));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddTransient<IDataService, DataService>();
-
+            services.AddTransient<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
