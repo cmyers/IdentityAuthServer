@@ -44,10 +44,9 @@ namespace AuthServer.Controllers
                 return BadRequest("Invalid client request");
             }
 
-            var users = await _dataService.GetUsers();
+            var users = await _dataService.GetUsers(); //TODO: add get single user method
             User user = users.Where(u => u.Username == login.UserName  && u.Password == login.Password).FirstOrDefault();
 
-            //TODO: check against database values
             if (user != null)
             {
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));

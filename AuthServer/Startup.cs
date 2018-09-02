@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 using AuthServer.Models;
 using AuthServer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
