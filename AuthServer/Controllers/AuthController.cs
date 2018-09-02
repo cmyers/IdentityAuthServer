@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,15 +37,18 @@ namespace AuthServer.Controllers
 
         [HttpPost]
         [Route("login")]
-        public IActionResult Login([FromBody]Login user)
+        public async Task<IActionResult> Login([FromBody]Login login)
         {
-            if (user == null)
+            if (login == null)
             {
                 return BadRequest("Invalid client request");
             }
 
+            var users = await _dataService.GetUsers();
+            User user = users.Where(u => u.Username == login.UserName  && u.Password == login.Password).FirstOrDefault();
+
             //TODO: check against database values
-            if (user.UserName == "test" && user.Password == "testPa55")
+            if (user != null)
             {
                 var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Key"]));
                 var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
