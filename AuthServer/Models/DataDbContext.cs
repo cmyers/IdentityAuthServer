@@ -1,6 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace AuthServer.Models
 {
@@ -16,14 +14,6 @@ namespace AuthServer.Models
         }
 
         public virtual DbSet<User> Users { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            //if (!optionsBuilder.IsConfigured)
-            //{
-            //    optionsBuilder.UseSqlServer("Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=E:\\Dev\\VS2017\\AuthServer\\AuthServer\\Data\\data.mdf;Integrated Security=True;Connect Timeout=30");
-            //}
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

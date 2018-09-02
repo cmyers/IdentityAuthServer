@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using AuthServer.Models;
 using AuthServer.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -14,10 +13,6 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AuthServer.Controllers
 {
-
-    
-
-
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase

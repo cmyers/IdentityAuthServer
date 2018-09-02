@@ -1,5 +1,4 @@
-﻿
-using AuthServer.Models;
+﻿using AuthServer.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
