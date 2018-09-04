@@ -18,12 +18,12 @@ namespace AuthServer.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private IUserService _dataService;
+        private IUserService _userService;
         private IConfiguration _configuration;
 
-        public AuthController(IUserService dataService, IConfiguration configuration)
+        public AuthController(IUserService userService, IConfiguration configuration)
         {
-            _dataService = dataService;
+            _userService = userService;
             _configuration = configuration;
         }
 
@@ -33,7 +33,7 @@ namespace AuthServer.Controllers
         [Route("getusers")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return Ok(await _dataService.GetUsers());
+            return Ok(await _userService.GetUsers());
         }
 
         [HttpPost]
@@ -45,7 +45,7 @@ namespace AuthServer.Controllers
                 return BadRequest("Invalid client request");
             }
 
-            bool authenticated = await _dataService.Authenticate(login);
+            bool authenticated = await _userService.Authenticate(login);
 
             if (authenticated)
             {
