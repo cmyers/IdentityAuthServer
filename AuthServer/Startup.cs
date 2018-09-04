@@ -14,12 +14,14 @@ namespace AuthServer
 {
     public class Startup
     {
-
+        private IHostingEnvironment _env;
+        private readonly string ContentRootPathToken = "%CONTENTROOTPATH%";
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment env)
         {
             Configuration = configuration;
+            _env = env;
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -41,7 +43,15 @@ namespace AuthServer
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"]))
                 };
             });
-            services.AddDbContext<DataDbContext>(options => options.UseSqlServer(Configuration.GetSection("ConnectionStrings:DataConnection").Value));
+
+            var dataConn = Configuration["ConnectionStrings:DataConnection"];
+            var identityConn = Configuration["ConnectionStrings:DataConnection"];
+
+            dataConn = dataConn.Replace(ContentRootPathToken, _env.ContentRootPath);
+            identityConn = identityConn.Replace(ContentRootPathToken, _env.ContentRootPath);
+
+            services.AddDbContext<AuthIdentityDbContext>(options => options.UseSqlServer(identityConn));
+            services.AddDbContext<DataDbContext>(options => options.UseSqlServer(dataConn));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<IUserService, UserService>();
         }
