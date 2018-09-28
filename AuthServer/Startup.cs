@@ -54,15 +54,21 @@ namespace AuthServer
             services.AddDbContext<AuthIdentityDbContext>(options => options.UseSqlServer(identityConn));
             services.AddDbContext<DataDbContext>(options => options.UseSqlServer(dataConn));
 
-            services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AuthIdentityDbContext>().AddDefaultTokenProviders();
+            //services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AuthIdentityDbContext>().AddDefaultTokenProviders();
+            services.AddDefaultIdentity<AppUser>()
+                .AddEntityFrameworkStores<AuthIdentityDbContext>()
+                .AddDefaultTokenProviders();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<IUserService, UserService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, AuthIdentityDbContext authDbContext)
         {
+            authDbContext.Database.EnsureDeleted();
+            authDbContext.Database.EnsureCreated();
+
             app.UseAuthentication();
             if (env.IsDevelopment())
             {

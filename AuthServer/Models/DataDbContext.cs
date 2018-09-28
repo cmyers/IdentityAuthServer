@@ -14,19 +14,5 @@ namespace AuthServer.Models
         }
 
         public virtual DbSet<User> Users { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<User>(entity =>
-            {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.Password).IsRequired();
-
-                entity.Property(e => e.Username)
-                    .IsRequired()
-                    .HasMaxLength(50);
-            });
-        }
     }
 }

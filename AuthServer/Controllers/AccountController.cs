@@ -33,8 +33,7 @@ namespace AuthServer.Controllers
         }
 
         [HttpPost]
-        [Route("register")]
-        public async Task<object> Register([FromBody]Login login)
+        public async Task<IActionResult> Register([FromBody]Login login)
         {
             var user = new AppUser
             {
@@ -46,7 +45,7 @@ namespace AuthServer.Controllers
             if (result.Succeeded)
             {
                 await _signInManager.SignInAsync(user, false);
-                return user;
+                return Ok(user);
             }
 
             return BadRequest();
