@@ -27,7 +27,6 @@ namespace AuthServer.Controllers
             _configuration = configuration;
         }
 
-        // GET api/values
         [HttpGet]
         [Authorize]
         [Route("getusers")]
@@ -54,7 +53,7 @@ namespace AuthServer.Controllers
 
                 var tokenOptions = new JwtSecurityToken(
                     issuer: _configuration["JWT:Issuer"],
-                    audience: _configuration["JWT:Issuer"],
+                    audience: _configuration["JWT:Audience"],
                     claims: new List<Claim>(),
                     expires: DateTime.Now.AddMinutes(5),
                     signingCredentials: signinCredentials

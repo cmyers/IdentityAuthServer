@@ -4,6 +4,7 @@ using AuthServer.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -39,19 +40,22 @@ namespace AuthServer
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = Configuration["JWT:Issuer"],
-                    ValidAudience = Configuration["JWT:Issuer"],
+                    ValidAudience = Configuration["JWT:Audience"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"]))
                 };
             });
 
             var dataConn = Configuration["ConnectionStrings:DataConnection"];
-            var identityConn = Configuration["ConnectionStrings:DataConnection"];
+            var identityConn = Configuration["ConnectionStrings:IdentityConnection"];
 
             dataConn = dataConn.Replace(ContentRootPathToken, _env.ContentRootPath);
             identityConn = identityConn.Replace(ContentRootPathToken, _env.ContentRootPath);
 
             services.AddDbContext<AuthIdentityDbContext>(options => options.UseSqlServer(identityConn));
             services.AddDbContext<DataDbContext>(options => options.UseSqlServer(dataConn));
+
+            services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AuthIdentityDbContext>().AddDefaultTokenProviders();
+
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<IUserService, UserService>();
         }
