@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AuthServer.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -32,15 +33,25 @@ namespace AuthServer.Controllers
             _configuration = configuration;
         }
 
+        [HttpGet]
+        [Authorize]
+        public ActionResult<IEnumerable<AppUser>> GetUsers()
+        {
+            return Ok(_userManager.Users);
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Register([FromBody]Login login)
+        public async Task<IActionResult> Register([FromBody]Register register)
         {
             var user = new AppUser
             {
-                UserName = login.UserName
+                UserName = register.UserName,
+                FirstName = register.FirstName,
+                LastName = register.LastName,
+                Email = register.Email
             };
 
-            var result = await _userManager.CreateAsync(user, login.Password);
+            var result = await _userManager.CreateAsync(user, register.Password);
 
             if (result.Succeeded)
             {
@@ -65,6 +76,20 @@ namespace AuthServer.Controllers
             {
                 return Unauthorized();
             }
+        }
+
+        [HttpPut]
+        [Authorize]
+        public async Task<IActionResult> Update([FromBody] UserDetails userDetails)
+        {
+            var user = await _userManager.FindByNameAsync(User.Identity.Name);
+
+            user.FirstName = userDetails.FirstName;
+            user.LastName = userDetails.LastName;
+            user.Email = userDetails.Email;
+
+            var result = await _userManager.UpdateAsync(user);
+            return Ok(result);
         }
 
         private string GenerateJwtToken(AppUser user)

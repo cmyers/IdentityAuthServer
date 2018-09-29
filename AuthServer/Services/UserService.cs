@@ -31,9 +31,9 @@ namespace AuthServer.Services
             return false;
         }
 
-        public bool AddUser()
+        public async Task<bool> AddUser(User user)
         {
-            _dataContext.Users.Add(new User());
+            await _dataContext.Users.AddAsync(user);
             return true;
         }
     }

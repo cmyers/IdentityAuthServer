@@ -53,8 +53,6 @@ namespace AuthServer
 
             services.AddDbContext<AuthIdentityDbContext>(options => options.UseSqlServer(identityConn));
             services.AddDbContext<DataDbContext>(options => options.UseSqlServer(dataConn));
-
-            //services.AddIdentity<AppUser, IdentityRole>().AddEntityFrameworkStores<AuthIdentityDbContext>().AddDefaultTokenProviders();
             services.AddDefaultIdentity<AppUser>()
                 .AddEntityFrameworkStores<AuthIdentityDbContext>()
                 .AddDefaultTokenProviders();
