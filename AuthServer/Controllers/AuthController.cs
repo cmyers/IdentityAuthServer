@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace AuthServer.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -29,14 +29,12 @@ namespace AuthServer.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("getusers")]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return Ok(await _userService.GetUsers());
         }
 
         [HttpPost]
-        [Route("login")]
         public async Task<IActionResult> Login([FromBody]Login login)
         {
             if (login == null)

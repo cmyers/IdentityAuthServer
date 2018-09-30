@@ -28,37 +28,37 @@ namespace AuthServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.RequireHttpsMetadata = false;
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = Configuration["JWT:Issuer"],
-                    ValidAudience = Configuration["JWT:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"]))
-                };
-            });
-
             var dataConn = Configuration["ConnectionStrings:DataConnection"];
             var identityConn = Configuration["ConnectionStrings:IdentityConnection"];
+
 
             dataConn = dataConn.Replace(ContentRootPathToken, _env.ContentRootPath);
             identityConn = identityConn.Replace(ContentRootPathToken, _env.ContentRootPath);
 
             services.AddDbContext<AuthIdentityDbContext>(options => options.UseSqlServer(identityConn));
             services.AddDbContext<DataDbContext>(options => options.UseSqlServer(dataConn));
-            services.AddDefaultIdentity<AppUser>()
-                .AddEntityFrameworkStores<AuthIdentityDbContext>()
-                .AddDefaultTokenProviders();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<IUserService, UserService>();
+
+            services.AddDefaultIdentity<AppUser>()
+                .AddEntityFrameworkStores<AuthIdentityDbContext>();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.RequireHttpsMetadata = false;
+                    options.SaveToken = true;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["JWT:Issuer"],
+                        ValidAudience = Configuration["JWT:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"]))
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,16 +68,8 @@ namespace AuthServer
             authDbContext.Database.EnsureCreated();
 
             app.UseAuthentication();
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
-            }
-            app.UseHttpsRedirection();
             app.UseMvc();
+            
         }
     }
 }
