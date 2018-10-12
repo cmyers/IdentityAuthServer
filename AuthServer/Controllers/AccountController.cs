@@ -55,7 +55,6 @@ namespace AuthServer.Controllers
 
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, false);
                 return Ok(user);
             }
 
