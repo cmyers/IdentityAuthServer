@@ -16,7 +16,7 @@ namespace AuthServer.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthController : Controller
     {
         private IUserService _userService;
         private IConfiguration _configuration;
