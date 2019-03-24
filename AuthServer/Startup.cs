@@ -28,9 +28,9 @@ namespace AuthServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // TODO create options classes for app settings
             var dataConn = Configuration["ConnectionStrings:DataConnection"];
             var identityConn = Configuration["ConnectionStrings:IdentityConnection"];
-
 
             dataConn = dataConn.Replace(ContentRootPathToken, _env.ContentRootPath);
             identityConn = identityConn.Replace(ContentRootPathToken, _env.ContentRootPath);
