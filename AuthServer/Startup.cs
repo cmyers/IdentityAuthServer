@@ -62,14 +62,17 @@ namespace AuthServer
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, AuthIdentityDbContext authDbContext)
+        public void Configure(IApplicationBuilder app, AuthIdentityDbContext authDbContext)
         {
+            if (_env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseMvc();
             authDbContext.Database.EnsureDeleted();
             authDbContext.Database.EnsureCreated();
 
-            app.UseAuthentication();
-            app.UseMvc();
-            
         }
     }
 }

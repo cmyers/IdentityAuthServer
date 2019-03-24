@@ -16,7 +16,7 @@ namespace AuthServer.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController : Controller
     {
         private readonly SignInManager<AppUser> _signInManager;
         private readonly UserManager<AppUser> _userManager;
