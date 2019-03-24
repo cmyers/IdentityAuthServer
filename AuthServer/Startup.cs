@@ -67,12 +67,13 @@ namespace AuthServer
             if (_env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                authDbContext.Database.EnsureDeleted();
+                authDbContext.Database.EnsureCreated();
             }
 
+            app.UseAuthentication();
             app.UseMvc();
-            authDbContext.Database.EnsureDeleted();
-            authDbContext.Database.EnsureCreated();
-
+           
         }
     }
 }
