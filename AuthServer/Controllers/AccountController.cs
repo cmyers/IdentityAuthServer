@@ -16,6 +16,7 @@ namespace AuthServer.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class AccountController : Controller
     {
         private readonly SignInManager<AppUser> _signInManager;
@@ -34,13 +35,13 @@ namespace AuthServer.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult<IEnumerable<AppUser>> GetUsers()
         {
             return Ok(_userManager.Users);
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody]Register register)
         {
             var user = new AppUser
@@ -62,6 +63,7 @@ namespace AuthServer.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         public async Task<IActionResult> Login([FromBody] Login model)
         {
             var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);

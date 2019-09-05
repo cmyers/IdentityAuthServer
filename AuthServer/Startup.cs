@@ -9,17 +9,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AuthServer
 {
     public class Startup
     {
-        private IHostingEnvironment _env;
-        private readonly string ContentRootPathToken = "%CONTENTROOTPATH%";
+        private IWebHostEnvironment _env;
+        private const string CONTENTROOTPATHTOKEN = "%CONTENTROOTPATH%";
         public IConfiguration Configuration { get; }
 
-        public Startup(IConfiguration configuration, IHostingEnvironment env)
+        public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
             Configuration = configuration;
             _env = env;
@@ -28,12 +29,15 @@ namespace AuthServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // TODO create options classes for app settings
-            var dataConn = Configuration["ConnectionStrings:DataConnection"];
-            var identityConn = Configuration["ConnectionStrings:IdentityConnection"];
+            services.AddApplicationInsightsTelemetry();
+            services.AddControllers();
 
-            dataConn = dataConn.Replace(ContentRootPathToken, _env.ContentRootPath);
-            identityConn = identityConn.Replace(ContentRootPathToken, _env.ContentRootPath);
+            // TODO create options classes for app settings
+            var dataConn = Configuration.GetConnectionString("DataConnection");
+            var identityConn = Configuration.GetConnectionString("IdentityConnection");
+
+            dataConn = dataConn.Replace(CONTENTROOTPATHTOKEN, _env.ContentRootPath);
+            identityConn = identityConn.Replace(CONTENTROOTPATHTOKEN, _env.ContentRootPath);
 
             services.AddDbContext<AuthIdentityDbContext>(options => options.UseSqlServer(identityConn));
             services.AddDbContext<DataDbContext>(options => options.UseSqlServer(dataConn));
@@ -75,9 +79,15 @@ namespace AuthServer
                 dataDbContext.Database.EnsureCreated();
             }
 
+            app.UseHttpsRedirection();
+            app.UseRouting();
             app.UseAuthentication();
-            app.UseMvc();
-           
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
