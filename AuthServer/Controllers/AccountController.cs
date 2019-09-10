@@ -59,7 +59,7 @@ namespace AuthServer.Controllers
                 return Ok(user);
             }
 
-            return BadRequest();
+            return BadRequest(result.Errors);
         }
 
         [HttpPost]
