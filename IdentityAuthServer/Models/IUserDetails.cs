@@ -1,4 +1,4 @@
-﻿namespace AuthServer.Models
+﻿namespace IdentityAuthServer.Models
 {
     public interface IUserDetails
     {
