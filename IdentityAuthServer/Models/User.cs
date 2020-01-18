@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AuthServer.Models
+namespace IdentityAuthServer.Models
 {
     public partial class User
     {

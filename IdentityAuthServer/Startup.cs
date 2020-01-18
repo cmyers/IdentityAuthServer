@@ -1,16 +1,15 @@
 ﻿using System.Text;
-using AuthServer.Models;
-using AuthServer.Services;
+using IdentityAuthServer.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 
-namespace AuthServer
+namespace IdentityAuthServer
 {
     public class Startup
     {
@@ -31,19 +30,14 @@ namespace AuthServer
             services.AddControllers();
 
             // TODO create options classes for app settings
-            var dataConn = Configuration.GetConnectionString("DataConnection");
             var identityConn = Configuration.GetConnectionString("IdentityConnection");
 
-            dataConn = dataConn.Replace(CONTENTROOTPATHTOKEN, _env.ContentRootPath);
             identityConn = identityConn.Replace(CONTENTROOTPATHTOKEN, _env.ContentRootPath);
 
-            services.AddDbContext<AuthIdentityDbContext>(options => options.UseSqlServer(identityConn));
-            services.AddDbContext<DataDbContext>(options => options.UseSqlServer(dataConn));
-
-            services.AddTransient<IUserService, UserService>();
+            services.AddDbContext<IdentityAuthDbContext>(options => options.UseSqlServer(identityConn));
 
             services.AddDefaultIdentity<AppUser>()
-                .AddEntityFrameworkStores<AuthIdentityDbContext>();
+                .AddEntityFrameworkStores<IdentityAuthDbContext>();
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -64,17 +58,13 @@ namespace AuthServer
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, AuthIdentityDbContext authDbContext, DataDbContext dataDbContext)
+        public void Configure(IApplicationBuilder app, IdentityAuthDbContext authDbContext)
         {
             if (_env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 authDbContext.Database.EnsureDeleted();
                 authDbContext.Database.EnsureCreated();
-
-                //basic db without identity server
-                dataDbContext.Database.EnsureDeleted();
-                dataDbContext.Database.EnsureCreated();
             }
 
             app.UseHttpsRedirection();

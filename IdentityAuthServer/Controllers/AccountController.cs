@@ -5,14 +5,14 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using AuthServer.Models;
+using IdentityAuthServer.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace AuthServer.Controllers
+namespace IdentityAuthServer.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
