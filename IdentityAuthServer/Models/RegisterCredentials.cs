@@ -2,7 +2,7 @@
 
 namespace IdentityAuthServer.Models
 {
-    public class Login
+    public class RegisterCredentials : UserDetails, IUserDetails
     {
         [Required]
         public string UserName { get; set; }

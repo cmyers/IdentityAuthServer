@@ -42,7 +42,7 @@ namespace IdentityAuthServer.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody]Register register)
+        public async Task<IActionResult> Register(RegisterCredentials register)
         {
             var user = new AppUser
             {
@@ -64,8 +64,18 @@ namespace IdentityAuthServer.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] Login model)
+        public async Task<IActionResult> Login(PasswordGrantCredentials model)
         {
+            if (model.GrantType != "password")
+            {
+                return BadRequest("Invalid grant type");
+            }
+
+            if(model.ClientId != _configuration["JWT:ClientId"])
+            {
+                return BadRequest("Invalid client id");
+            }
+
             var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
 
             if (result.Succeeded)
@@ -81,7 +91,7 @@ namespace IdentityAuthServer.Controllers
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update([FromBody] UserDetails userDetails)
+        public async Task<IActionResult> Update(UserDetails userDetails)
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
 
