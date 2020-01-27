@@ -42,7 +42,7 @@ namespace IdentityAuthServer.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Register([FromBody]Register register)
+        public async Task<IActionResult> Register(Register register)
         {
             var user = new AppUser
             {
@@ -64,8 +64,13 @@ namespace IdentityAuthServer.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] Login model)
+        public async Task<IActionResult> Login(Login model)
         {
+            if (model.GrantType != "password")
+            {
+                return BadRequest("Invalid grant type");
+            }
+
             var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, false, false);
 
             if (result.Succeeded)
