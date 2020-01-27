@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace IdentityAuthServer
 {
@@ -46,13 +47,16 @@ namespace IdentityAuthServer
                     options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
+                        RequireSignedTokens = true,
+                        RequireExpirationTime = true,
+                        ValidateIssuer = true,
                         ValidIssuer = Configuration["JWT:Issuer"],
+                        ValidateAudience = true,
                         ValidAudience = Configuration["JWT:Audience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Key"]))
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(Configuration["JWT:Key"])),
+                        ClockSkew = TimeSpan.Zero //default is 5 minutes
                     };
                 });
         }
